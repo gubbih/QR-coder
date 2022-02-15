@@ -24,7 +24,7 @@ namespace QR_coder
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
 
-            // Gemmer QR-Koden i .exe mappen, og burde vises i programmet (dette er lavet i console.
+            // Gemmer QR-Koden i .exe mappen, og burde vises i programmet (dette er lavet i console)
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             link = link + ".jpg";
             qrCodeImage.Save(@link);
