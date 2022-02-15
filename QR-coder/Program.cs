@@ -12,8 +12,6 @@ namespace QR_coder
         {
 
             //klar gør QRCoder
-            EncoderParameters myEncoderParameters;
-            myEncoderParameters = new EncoderParameters(1);
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
 
             //Input tekts som laver det om det en QR senere
