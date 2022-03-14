@@ -13,9 +13,9 @@ namespace QR_coder
         static void Main(string[] args)
         {
             //klar gør QRCoder
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            QRCodeGenerator qrGenerator = new();
             string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
-            List<qr_code> qr_list = new();
+            List<Qr_code> qr_list = new();
             Console.WriteLine("pls select what you want to do");
 
             Console.WriteLine("1. Save qr code to disk from server");
@@ -38,31 +38,30 @@ namespace QR_coder
                     string CommandText = $"SELECT {values} FROM {table}";
 
                     SqlCommand sqlCommand = new(CommandText, connection);
-                    using (SqlDataReader reader = sqlCommand.ExecuteReader())
+                    using SqlDataReader reader = sqlCommand.ExecuteReader();
+
+                    while (reader.Read() != false)
                     {
-                        
-                        while (reader.Read() != false)
-                        {
-                            int imgID = int.Parse(reader["TestImgID"].ToString());
-                            string imgName = reader["imgName"].ToString();
-                            byte[] imgbyte = (byte[])reader["img"]; // Gets byte[] from server
+                        int imgID = int.Parse(reader["TestImgID"].ToString());
+                        string imgName = reader["imgName"].ToString();
+                        byte[] imgbyte = (byte[])reader["img"]; // Gets byte[] from server
 
-                            qr_list.Add(new qr_code(imgID, imgName, imgbyte));//saves everything in a constructor
+                        qr_list.Add(new Qr_code(imgID, imgName, imgbyte));//saves everything in a constructor
 
-                        }
                     }
-                    
+                    connection.Close();
+
                 }
                 Console.WriteLine("List over img in database");
                 int x = 1;
-                foreach (qr_code code in qr_list) // make a list over all qr-codes in sql
+                foreach (Qr_code code in qr_list) // make a list over all qr-codes in sql
                 {
                     Console.WriteLine(x + ". " + code.ImgName);
                     x++;
                 }
                 int slected_id = -1 + int.Parse(Console.ReadLine()); // pick by ID
 
-                QRCodeData qrCodeData = new QRCodeData(qr_list[slected_id].Img, QRCodeData.Compression.Uncompressed); // de-compresser.
+                QRCodeData qrCodeData = new QRCodeData(qr_list[slected_id].ImgByte, QRCodeData.Compression.Uncompressed); // de-compresser.
                 
                 QRCode qrCode = new QRCode(qrCodeData); // create qr-code from the data, all in memory
                 Bitmap qrCodeImage = qrCode.GetGraphic(20); // draws img
@@ -82,7 +81,7 @@ namespace QR_coder
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.M);
 
                 byte[] pic = qrCodeData.GetRawData(QRCodeData.Compression.Uncompressed); //compresses to a byte[]
-                QRCode qrCode = new QRCode(qrCodeData);
+                QRCode qrCode = new(qrCodeData);
 
                 // Gemmer QR-Koden i .exe mappen, og burde vises i programmet (dette er lavet i console)
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
@@ -90,17 +89,18 @@ namespace QR_coder
                 link = link + ".jpg"; // must declare file extenstion
                 qrCodeImage.Save(link, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                SqlConnection conn = new SqlConnection(conString);
+                SqlConnection conn = new(conString);
 
 
                 try
                 {
 
                     string sql = $"INSERT into Testimg (Testimg.imgName, Testimg.img) values('{link}', @Pic)";
-                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    SqlCommand cmd = new(sql, conn);
 
                     SqlParameter sqlParam = cmd.Parameters.AddWithValue("@Pic", pic);// erstatter @Pic med pic i sql sætningen
                     sqlParam.DbType = DbType.Binary; //converts byte[] to a varbinary()
+                    
 
                     conn.Open();
                     cmd.ExecuteNonQuery(); // executer sql
@@ -119,7 +119,7 @@ namespace QR_coder
             }
         }
     }
-    public class qr_code
+    public class Qr_code
     {
         private int Id;
 
@@ -135,19 +135,19 @@ namespace QR_coder
             get { return imgName; }
             set { imgName = value; }
         }
-        private byte[] img;
+        private byte[] imgByte;
 
-        public byte[] Img
+        public byte[] ImgByte
         {
-            get { return img; }
-            set { img = value; }
+            get { return imgByte; }
+            set { imgByte = value; }
         }
 
-        public qr_code(int iD, string imgName, byte[] img)
+        public Qr_code(int iD, string imgName, byte[] imgByte)
         {
             ID = iD;
             ImgName = imgName;
-            Img = img;
+            ImgByte = imgByte;
         }
     }
 }
