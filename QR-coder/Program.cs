@@ -12,6 +12,9 @@ namespace QR_coder
     {
         static void Main(string[] args)
         {
+            //klar gør QRCoder
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+            string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
             List<qr_code> qr_list = new();
             Console.WriteLine("pls select what you want to do");
 
@@ -19,16 +22,16 @@ namespace QR_coder
             Console.WriteLine("2. Save qr code to server from URL");
             string select = Console.ReadLine();
 
+            Console.Clear();
 
             if (int.Parse(select) == 1)
             {
-                string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
+                
 
                 
                 using (SqlConnection connection = new(conString))
                 {
 
-                    Console.Clear();
                     connection.Open();
                     string table = "Testimg";
                     string values = "Testimg.TestImgID, Testimg.imgName, Testimg.img ";
@@ -58,7 +61,6 @@ namespace QR_coder
                     x++;
                 }
                 int slected_id = -1 + int.Parse(Console.ReadLine()); // pick by ID
-                QRCodeGenerator qrGenerator = new QRCodeGenerator(); // Gets ready to genorate qr
 
                 QRCodeData qrCodeData = new QRCodeData(qr_list[slected_id].Img, QRCodeData.Compression.Uncompressed); // de-compresser.
                 
@@ -71,11 +73,6 @@ namespace QR_coder
             }
             else if (int.Parse(select) == 2)
             {
-
-                Console.Clear();
-
-                //klar gør QRCoder
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
 
                 //Input tekts som laver det om det en QR senere
                 Console.WriteLine("Insert link");
@@ -93,7 +90,6 @@ namespace QR_coder
                 link = link + ".jpg"; // must declare file extenstion
                 qrCodeImage.Save(link, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
                 SqlConnection conn = new SqlConnection(conString);
 
 
