@@ -11,24 +11,21 @@ namespace QR_coder
     internal class Program
     {
         static void Main(string[] args)
-        {
-            //klar gør QRCoder
-            QRCodeGenerator qrGenerator = new();
+        {            
+            QRCodeGenerator qrGenerator = new(); //Gets QRcoder ready
             string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
             List<Qr_code> qr_list = new();
+
+
             Console.WriteLine("pls select what you want to do");
 
             Console.WriteLine("1. Save qr code to disk from server");
             Console.WriteLine("2. Save qr code to server from URL");
             string select = Console.ReadLine();
-
             Console.Clear();
 
             if (int.Parse(select) == 1)
             {
-                
-
-                
                 using (SqlConnection connection = new(conString))
                 {
 
@@ -71,23 +68,20 @@ namespace QR_coder
                 
             }
             else if (int.Parse(select) == 2)
-            {
-
-                //Input tekts som laver det om det en QR senere
+            {            
                 Console.WriteLine("Insert link");
                 string link = Console.ReadLine();
 
-                // Laver QR ud fra teksten
+                // Makes QR code out of a string
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(link, QRCodeGenerator.ECCLevel.M);
 
                 byte[] pic = qrCodeData.GetRawData(QRCodeData.Compression.Uncompressed); //compresses to a byte[]
                 QRCode qrCode = new(qrCodeData);
 
-                // Gemmer QR-Koden i .exe mappen, og burde vises i programmet (dette er lavet i console)
-                Bitmap qrCodeImage = qrCode.GetGraphic(20);
+                Bitmap qrCodeImage = qrCode.GetGraphic(20); // Saves qrcode in memory
 
-                link = link + ".jpg"; // must declare file extenstion
-                qrCodeImage.Save(link, System.Drawing.Imaging.ImageFormat.Jpeg);
+                string FileName = link + ".jpg"; // must declare file extenstion
+                qrCodeImage.Save(FileName, System.Drawing.Imaging.ImageFormat.Jpeg);//saves QR code in same folder as the exe is located
 
                 SqlConnection conn = new(conString);
 
