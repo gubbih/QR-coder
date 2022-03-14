@@ -5,7 +5,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
-using System.Text;
 
 namespace QR_coder
 {
@@ -65,7 +64,7 @@ namespace QR_coder
                 
                 QRCode qrCode = new QRCode(qrCodeData); // create qr-code from the data, all in memory
                 Bitmap qrCodeImage = qrCode.GetGraphic(20); // draws img
-                string fileName = qr_list[slected_id].ImgName; // file name
+                string fileName = qr_list[slected_id].ImgName + ".jpg"; // file name, must declare file extension
                 qrCodeImage.Save(@fileName, System.Drawing.Imaging.ImageFormat.Jpeg); // saves img with location
                 
                 
@@ -74,7 +73,6 @@ namespace QR_coder
             {
 
                 Console.Clear();
-                string filename = "newqr";
 
                 //klar gør QRCoder
                 QRCodeGenerator qrGenerator = new QRCodeGenerator();
@@ -91,8 +89,9 @@ namespace QR_coder
 
                 // Gemmer QR-Koden i .exe mappen, og burde vises i programmet (dette er lavet i console)
                 Bitmap qrCodeImage = qrCode.GetGraphic(20);
-                filename = filename + ".jpg";
-                qrCodeImage.Save(@filename);
+
+                link = link + ".jpg"; // must declare file extenstion
+                qrCodeImage.Save(link, System.Drawing.Imaging.ImageFormat.Jpeg);
 
                 string conString = "Server=10.56.8.36;Database=DB81;User Id=STUDENT81;Password=OPENDB_81;";
                 SqlConnection conn = new SqlConnection(conString);
@@ -103,9 +102,6 @@ namespace QR_coder
 
                     string sql = $"INSERT into Testimg (Testimg.imgName, Testimg.img) values('{link}', @Pic)";
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    
-                    MemoryStream stream = new MemoryStream(); //åbner for memory
-                    qrCodeImage.Save(stream, System.Drawing.Imaging.ImageFormat.Jpeg); //bruges til at gemme billed fra, til memory
 
                     SqlParameter sqlParam = cmd.Parameters.AddWithValue("@Pic", pic);// erstatter @Pic med pic i sql sætningen
                     sqlParam.DbType = DbType.Binary; //converts byte[] to a varbinary()
