@@ -60,6 +60,7 @@ namespace QR_coder
 
                 QRCodeData qrCodeData = new QRCodeData(qr_list[slected_id].ImgByte, QRCodeData.Compression.Uncompressed); // de-compresser.
                 
+
                 QRCode qrCode = new QRCode(qrCodeData); // create qr-code from the data, all in memory
                 Bitmap qrCodeImage = qrCode.GetGraphic(20); // draws img
                 string fileName = qr_list[slected_id].ImgName + ".jpg"; // file name, must declare file extension
@@ -79,7 +80,6 @@ namespace QR_coder
                 QRCode qrCode = new(qrCodeData);
 
                 Bitmap qrCodeImage = qrCode.GetGraphic(20); // Saves qrcode in memory
-
                 string FileName = link + ".jpg"; // must declare file extenstion
                 qrCodeImage.Save(FileName, System.Drawing.Imaging.ImageFormat.Jpeg);//saves QR code in same folder as the exe is located
 
