@@ -39,7 +39,7 @@ namespace QR_coder
 
                     while (reader.Read() != false)
                     {
-                        int imgID = int.Parse(reader["TestImgID"].ToString());
+                        int imgID = int.Parse(reader["TestImgID"].ToString());//hej :)
                         string imgName = reader["imgName"].ToString();
                         byte[] imgbyte = (byte[])reader["img"]; // Gets byte[] from server
 
